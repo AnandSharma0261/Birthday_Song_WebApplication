@@ -37,7 +37,8 @@ const LyricsPage = () => {
 
       setIsGenerating(true);
 
-      const response = await axios.post('http://localhost:3001/api/generate-lyrics', {
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+      const response = await axios.post(`${apiBaseUrl}/api/generate-lyrics`, {
         userId: userData.userId,
         receiverName: userData.receiverName,
         age: userData.age,
@@ -74,7 +75,8 @@ const LyricsPage = () => {
         setIsPlaying(false);
       }
 
-      const response = await axios.post('http://localhost:3001/api/text-to-speech', {
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+      const response = await axios.post(`${apiBaseUrl}/api/text-to-speech`, {
         text: lyrics,
         voice: userData.voice,
         songId: songId
