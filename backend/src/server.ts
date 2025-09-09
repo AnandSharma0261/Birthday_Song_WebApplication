@@ -22,6 +22,29 @@ if (!fs.existsSync(uploadsDir)) {
 // Serve static audio files
 app.use('/uploads', express.static(uploadsDir));
 
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    message: 'Birthday Song Generator API is running!',
+    timestamp: new Date().toISOString(),
+    endpoints: [
+      'POST /api/register',
+      'POST /api/verify-otp', 
+      'POST /api/generate-lyrics',
+      'POST /api/generate-audio'
+    ]
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    message: 'API is working correctly',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // In-memory database for demo (replace with MongoDB in production)
 const users: any[] = [];
 const songs: any[] = [];
