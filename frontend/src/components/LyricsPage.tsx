@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 import HamburgerMenu from './HamburgerMenu';
 
 const LyricsPage = () => {
@@ -38,7 +39,7 @@ const LyricsPage = () => {
       setIsGenerating(true);
 
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-      const response = await axios.post(`${apiBaseUrl}/api/generate-lyrics`, {
+      const response = await axios.post(`${API_BASE_URL}/api/generate-lyrics`, {
         userId: userData.userId,
         receiverName: userData.receiverName,
         age: userData.age,

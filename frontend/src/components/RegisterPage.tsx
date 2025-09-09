@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 import HamburgerMenu from './HamburgerMenu';
 
 const RegisterPage = () => {
@@ -49,7 +50,7 @@ const RegisterPage = () => {
 
     try {
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-      const response = await axios.post(`${apiBaseUrl}/api/register`, formData);
+            const response = await axios.post(`${API_BASE_URL}/api/register`, formData);
       
       if (response.data.success) {
         // Store user data and ID for later use
