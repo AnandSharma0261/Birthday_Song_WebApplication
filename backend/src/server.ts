@@ -110,7 +110,7 @@ app.post('/api/verify-otp', (req, res) => {
   }
 });
 
-// Generate birthday song lyrics using ChatGPT API
+// Generate birthday song lyrics using Groq API
 app.post('/api/generate-lyrics', async (req, res) => {
   try {
     const { userId, receiverName, age, gender, mood, genre, voice } = req.body;
@@ -123,7 +123,7 @@ app.post('/api/generate-lyrics', async (req, res) => {
       });
     }
 
-    // Enhanced ChatGPT API prompt with mood and personalization
+    // Enhanced Groq API prompt with mood and personalization
     const moodDescription = mood ? `The song should have a ${mood} mood/vibe.` : '';
     const ageInfo = age ? ` ${receiverName} is turning ${age} years old.` : '';
     
@@ -145,15 +145,15 @@ Generate a fresh, personalized birthday song now:`;
 
     let lyrics = '';
 
-    // Try ChatGPT API if key is available
-    if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+    // Try Groq API if key is available
+    if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'your_groq_api_key_here') {
       try {
-        console.log('Generating custom lyrics with ChatGPT for:', receiverName, 'Genre:', genre, 'Mood:', mood);
+        console.log('Generating custom lyrics with Groq for:', receiverName, 'Genre:', genre, 'Mood:', mood);
         
         const response = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
+          'https://api.groq.com/openai/v1/chat/completions',
           {
-            model: 'gpt-3.5-turbo',
+            model: 'llama-3.1-8b-instant',
             messages: [
               {
                 role: 'system',
@@ -169,35 +169,35 @@ Generate a fresh, personalized birthday song now:`;
           },
           {
             headers: {
-              'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+              'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
               'Content-Type': 'application/json'
             }
           }
         );
 
         lyrics = response.data.choices[0].message.content.trim();
-        console.log('Custom lyrics generated successfully by ChatGPT');
+        console.log('Custom lyrics generated successfully by Groq');
         
       } catch (apiError: any) {
-        console.error('OpenAI API Error:', apiError.response?.data || apiError.message);
+        console.error('Groq API Error:', apiError.response?.data || apiError.message);
         
-        // Check if it's a quota/billing issue
-        if (apiError.response?.data?.error?.code === 'insufficient_quota') {
-          return res.status(400).json({
+        // Check if it's a quota/rate limit issue
+        if (apiError.response?.data?.error?.code === 'rate_limit_exceeded') {
+          return res.status(429).json({
             success: false,
-            message: 'OpenAI API quota exceeded. Please add credits to your OpenAI account at https://platform.openai.com/account/billing to generate custom lyrics.'
+            message: 'Groq API rate limit exceeded. Please wait a moment and try again.'
           });
         }
         
         return res.status(500).json({
           success: false,
-          message: 'Failed to generate custom lyrics. Please check your OpenAI API key and try again.'
+          message: 'Failed to generate custom lyrics. Please check your Groq API key and try again.'
         });
       }
     } else {
       return res.status(400).json({
         success: false,
-        message: 'OpenAI API key is required to generate custom birthday songs. Please add your API key to continue.'
+        message: 'Groq API key is required to generate custom birthday songs. Please add your API key to continue.'
       });
     }
 
