@@ -247,7 +247,7 @@ app.post('/api/text-to-speech', async (req, res) => {
     let audioUrl = '';
 
     // Try ElevenLabs API if key is available
-    if (process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_API_KEY !== 'your_elevenlabs_api_key_here') {
+    if (false) { // Temporarily disabled to focus on lyrics functionality
       try {
         // ElevenLabs voice IDs (you can get these from their platform)
         const voiceIds = {
