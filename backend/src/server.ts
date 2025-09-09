@@ -153,7 +153,7 @@ Generate a fresh, personalized birthday song now:`;
         const response = await axios.post(
           'https://api.groq.com/openai/v1/chat/completions',
           {
-            model: 'llama-3.1-8b-instant',
+            model: 'llama3-8b-8192',
             messages: [
               {
                 role: 'system',
@@ -247,7 +247,7 @@ app.post('/api/text-to-speech', async (req, res) => {
     let audioUrl = '';
 
     // Try ElevenLabs API if key is available
-    if (false) { // Temporarily disabled to focus on lyrics functionality
+    if (process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_API_KEY !== 'your_elevenlabs_api_key_here') {
       try {
         // ElevenLabs voice IDs (you can get these from their platform)
         const voiceIds = {
