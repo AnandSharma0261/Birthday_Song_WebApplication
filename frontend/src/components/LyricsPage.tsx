@@ -38,7 +38,6 @@ const LyricsPage = () => {
 
       setIsGenerating(true);
 
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
       const response = await axios.post(`${API_BASE_URL}/api/generate-lyrics`, {
         userId: userData.userId,
         receiverName: userData.receiverName,
@@ -76,8 +75,7 @@ const LyricsPage = () => {
         setIsPlaying(false);
       }
 
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-      const response = await axios.post(`${apiBaseUrl}/api/text-to-speech`, {
+      const response = await axios.post(`${API_BASE_URL}/api/text-to-speech`, {
         text: lyrics,
         voice: userData.voice,
         songId: songId

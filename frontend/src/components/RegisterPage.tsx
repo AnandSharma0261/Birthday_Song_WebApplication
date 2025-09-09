@@ -49,8 +49,7 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-            const response = await axios.post(`${API_BASE_URL}/api/register`, formData);
+      const response = await axios.post(`${API_BASE_URL}/api/register`, formData);
       
       if (response.data.success) {
         // Store user data and ID for later use

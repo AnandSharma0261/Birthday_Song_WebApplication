@@ -41,8 +41,7 @@ const OTPPage = () => {
     setIsLoading(true);
     
     try {
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
-            const response = await axios.post(`${API_BASE_URL}/api/verify-otp`, {
+      const response = await axios.post(`${API_BASE_URL}/api/verify-otp`, {
         otp: otpValue
       });
 
