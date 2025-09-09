@@ -1,1 +1,18 @@
+# Environment variables
 .env
+# But allow .env.example
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# Build files
+dist/
+build/
+
+# Uploads directory
+uploads/
