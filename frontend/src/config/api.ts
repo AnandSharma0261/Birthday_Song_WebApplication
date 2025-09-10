@@ -1,7 +1,7 @@
-// API Configuration for Replit deployment
+// API Configuration for Vercel deployment
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
   (import.meta.env.PROD 
-    ? '' // Same domain in production (Replit)
+    ? '' // Same domain in production (Vercel)
     : 'http://localhost:3001' // Local development
   );
 

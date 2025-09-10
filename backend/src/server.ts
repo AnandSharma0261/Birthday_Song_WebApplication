@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3001;
 // CORS configuration for production
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://*.replit.dev', 'https://*.replit.co'] 
+    ? ['https://*.vercel.app', 'https://*.vercel.com'] 
     : ['http://localhost:3000', 'http://localhost:3002'],
   credentials: true
 }));
@@ -418,3 +418,6 @@ app.get('/api/songs/:userId', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// Export for Vercel
+export default app;
