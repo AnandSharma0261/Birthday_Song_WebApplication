@@ -5,12 +5,25 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 
-dotenv.config();
+// Load environment variables
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
+// Debug: Check if env variables are loaded
+console.log('Environment check:');
+console.log('GROQ_API_KEY loaded:', !!process.env.GROQ_API_KEY);
+console.log('ELEVENLABS_API_KEY loaded:', !!process.env.ELEVENLABS_API_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+// CORS configuration for production
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://*.replit.dev', 'https://*.replit.co'] 
+    : ['http://localhost:3000', 'http://localhost:3002'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Create uploads directory if it doesn't exist
@@ -21,6 +34,20 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Serve static audio files
 app.use('/uploads', express.static(uploadsDir));
+
+// Serve frontend build files in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '..', '..', 'frontend', 'dist');
+  app.use(express.static(frontendPath));
+  
+  // Handle React Router
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+}
 
 // Health check endpoint
 app.get('/', (req, res) => {
@@ -110,6 +137,44 @@ app.post('/api/verify-otp', (req, res) => {
   }
 });
 
+// Test endpoint to debug Groq API
+app.get('/api/test-groq', async (req, res) => {
+  console.log('Testing Groq API...');
+  console.log('GROQ_API_KEY exists:', !!process.env.GROQ_API_KEY);
+  console.log('GROQ_API_KEY length:', process.env.GROQ_API_KEY?.length);
+  
+  if (!process.env.GROQ_API_KEY) {
+    return res.json({ error: 'No GROQ_API_KEY found' });
+  }
+  
+  try {
+    const response = await axios.post(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        model: 'llama-3.1-8b-instant',
+        messages: [
+          {
+            role: 'user',
+            content: 'Write a simple hello message.'
+          }
+        ],
+        max_tokens: 50
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    res.json({ success: true, message: response.data.choices[0].message.content });
+  } catch (error: any) {
+    console.error('Groq test error:', error.response?.data || error.message);
+    res.json({ error: error.response?.data || error.message });
+  }
+});
+
 // Generate birthday song lyrics using Groq API
 app.post('/api/generate-lyrics', async (req, res) => {
   try {
@@ -145,15 +210,20 @@ Generate a fresh, personalized birthday song now:`;
 
     let lyrics = '';
 
-    // Try Groq API if key is available
-    if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'your_groq_api_key_here') {
+    // Debug: Check if GROQ_API_KEY is loaded
+    console.log('GROQ_API_KEY exists:', !!process.env.GROQ_API_KEY);
+    console.log('GROQ_API_KEY value (first 10 chars):', process.env.GROQ_API_KEY?.substring(0, 10));
+
+    // Use Groq API only - Fixed condition
+    if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.length > 10) {
       try {
         console.log('Generating custom lyrics with Groq for:', receiverName, 'Genre:', genre, 'Mood:', mood);
+        console.log('Using GROQ API Key:', process.env.GROQ_API_KEY.substring(0, 10) + '...');
         
         const response = await axios.post(
           'https://api.groq.com/openai/v1/chat/completions',
           {
-            model: 'llama3-8b-8192',
+            model: 'llama-3.1-8b-instant',
             messages: [
               {
                 role: 'system',
